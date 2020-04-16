@@ -40,6 +40,22 @@ Interpret the coefficient of `income`.
 
 
 
+```{r scene_1}
+logistic_mod <- logistic_reg() %>%
+  set_engine("glm")
+
+logistic_fit <- fit(logistic_mod,
+                    dvote ~ ideology + income + gender + race,
+                    data = nes)
+
+logistic_fit %>%
+  tidy(conf.int = TRUE) %>%
+  select(term, estimate, conf.low, conf.high)
+
+```
+
+"If we divide the US population into 5 income categories and compare people in two adjoining buckets, say the 3s and the 4s, then the richer people are about 5% less likely to prefer the Democratic candidate, all else equal, but it might be as low as 4% or as high as 7%."
+
 # Scene 2
 
 **Prompt:** Review [CART models](https://davidkane9.github.io/PPBDS/13-classification.html#classification-and-regression-trees-cart). Using the all the same independent variables as in Scene 1, estimate a CART model in which `dvote` is the dependent variable.
