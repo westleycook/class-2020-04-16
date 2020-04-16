@@ -6,7 +6,7 @@ output: html_document
 ```{r setup, include=FALSE}
 # Thanks to Seaam Noor for some excellent work on this script.
 
-# There are two packges which you need to install.
+# There are two packages which you need to install.
 
 # install.packages("tidymodels")
 # install.packages("rpart.plot")
@@ -106,8 +106,8 @@ Specificity = The proportion of actual 0s classified as 0
 
 Make a cool animation with the nes data, using [this package](https://github.com/daranzolin/d3rain). Put the animation in an Rpubs page. Here are the animations which students in 1006 made yesterday (with different data):
 
-https://rpubs.com/rmckenzie11/599663
-https://rpubs.com/evelyncai/d3rain_practice
-https://rpubs.com/diego_martinez/d3rain
+https://rpubs.com/rmckenzie11/599663   
+https://rpubs.com/evelyncai/d3rain_practice   
+https://rpubs.com/diego_martinez/d3rain   
 
 Surely, you can make something better than what they did! You also have a much richer data set to play with than they had. Maybe separate panels for different years. Maybe voters rain down from different income or ideology categories across the top? There are many possibilities! Add a link with to [today's Preceptor's Notes](https://piazza.com/class/k5y1jx0s5ibe1?cid=721).
