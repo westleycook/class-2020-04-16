@@ -17,7 +17,7 @@ library(tidyverse)
 
 # tidymodels really wants your dependent variable to be a factor. After all, you
 # have told tidymodels that it is not really a number --- it is a category with
-# two possible values. Keeping it as a 0/1 numeric is a hack.
+# two possible values. Keeping it as a 0/1 numeric is a hack. "Yes" and "No" are bad choices since 
 
 nes <- read_rds("ch13_nes.rds") %>% 
   mutate(dvote = as.factor(ifelse(dvote == 1, "Yes", "No")))
@@ -64,7 +64,18 @@ Plot the resulting model.
 
 Hint: In addition to the functions you used in Scene 1, you may find `set_mode()` and `prp()` to be helpful.
 
+```{r scene_2}
+cart_mod <- decision_tree() %>%
+  set_engine("rpart", model = TRUE) %>%
+  set_mode("classification")
 
+cart_fit <- fit(cart_mod,
+                    dvote ~ ideology + income + gender + race,
+                    data = nes)
+
+cart_fit$fit %>%
+  prp(extra = 6)
+```
 
 
 # Scene 3
@@ -78,6 +89,18 @@ Print out and interpret the model.
 How many trees did the forest use? Would we get better results if we used a different number of trees?
 
 What is OOB error?
+
+```{r}
+rf_mod <- rand_forest() %>%
+  set_engine("randomForest") %>%
+  set_mode("classification")
+
+rf_fit <- fit(rf_mod,
+              dvote ~ ideology + income + gender + race,
+              data = nes)
+
+rf_fit
+```
 
 
 # Scene 4
