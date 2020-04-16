@@ -1,0 +1,94 @@
+---
+title: 'Chapter 13: Classification'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Thanks to Seaam Noor for some excellent work on this script.
+
+knitr::opts_chunk$set(echo = TRUE)
+library(broom)
+library(infer)
+library(skimr)
+library(gganimate)
+library(rpart.plot)
+library(tidymodels)
+library(tidyverse)
+
+# tidymodels really wants your dependent variable to be a factor. After all, you
+# have told tidymodels that it is not really a number --- it is a category with
+# two possible values. Keeping it as a 0/1 numeric is a hack.
+
+nes <- read_rds("ch13_nes.rds") %>% 
+  mutate(dvote = as.factor(ifelse(dvote == 1, "Yes", "No")))
+  
+```
+
+# Before we start
+
+Here is the [chapter titled "Classification"](https://davidkane9.github.io/PPBDS/13-classification.html) that this class is based on. The data has been taken from the National Election Survey. Note that both ideology and party are measured in 7 point scales. `ideology` ranges from Strong liberal (1) to Strong Conservative (7). `party` ranges from Strong Democrat (1) to Strong Republican (7). `income` is measured on a 5 point scale ranging from very poor (1) to very rich (5). You may treat these variables as continuous. `dvote`  is our outcome variable. It is whether or not --- "Yes" or "No" --- the person prefers the Democratic candidate for President.
+
+We are using the [**tidymodels** collection of packages](https://www.tidymodels.org/) today, the more modern/professional approach to creating models in R.
+
+# Scene 1
+
+**Prompt:** Following [the approach](https://davidkane9.github.io/PPBDS/13-classification.html#professional-models) outlined in the *Primer*, use **tidymodels** to estimate a logistic regression in which `dvote` is the dependent variable and `ideology`, `income`, `gender`, and `race` are the independent variables. 
+
+Useful functions include `logistic_reg()`, `set_engine()`, and `fit()`.
+
+Interpret the coefficient of `income`.
+
+
+
+# Scene 2
+
+**Prompt:** Review [CART models](https://davidkane9.github.io/PPBDS/13-classification.html#classification-and-regression-trees-cart). Using the all the same independent variables as in Scene 1, estimate a CART model in which `dvote` is the dependent variable.
+
+Plot the resulting model.
+
+Hint: In addition to the functions you used in Scene 1, you may find `set_mode()` and `prp()` to be helpful.
+
+
+
+
+# Scene 3
+
+**Prompt:** Following [the approach](https://davidkane9.github.io/PPBDS/13-classification.html#random-forests) outlined in the *Primer*, use **tidymodels** to estimate a random forest model in which `dvote` is the dependent variable and `ideology`, `income`, `gender`, and `race` are the independent variables. 
+
+Hint: In addition to the functions you used in Scenes 1 and 2, you may find `rand_forest()` to be helpful.
+
+Print out and interpret the model.
+
+How many trees did the forest use? Would we get better results if we used a different number of trees?
+
+What is OOB error?
+
+
+# Scene 4
+
+**Prompt:** We’ve explored three ways to model binary responses in this chapter. Compare the accuracy of predictions of `logistic` vs `cart` vs `forest` on our `nes` data. Here are the steps to follow:
+
+1. Use the models we have already estimated.
+
+2. Add columns of each model's prediction on `nes` by using `mutate` on `nes`. You should use `predict` and feed it the saved model and `new_data = nes`. `pull()` the `.pred_class` from the prediction. 
+
+3. Create a tibble with the accuracy of the prediction columns of each model.
+
+4. Is accuracy the metric to use? Would using sensitivity or specificity be more appropriate?
+
+Note:
+Accuracy = (Actual 1 as 1 + Actual 0 as 0) / n
+Sensitivity = The proportion of actual 1s classified as 1
+Specificity = The proportion of actual 0s classified as 0
+
+
+
+# Challenge Problem
+
+Make a cool animation with the nes data, using [this package](https://github.com/daranzolin/d3rain). Put the animation in an Rpubs page. Here are the animations which students in 1006 made yesterday (with different data):
+
+https://rpubs.com/rmckenzie11/599663
+https://rpubs.com/evelyncai/d3rain_practice
+https://rpubs.com/diego_martinez/d3rain
+
+Surely, you can make something better than what they did! You also have a much richer data set to play with than they had. Maybe separate panels for different years. Maybe voters rain down from different income or ideology categories across the top? There are many possibilities! Add a link with to [today's Preceptor's Notes](https://piazza.com/class/k5y1jx0s5ibe1?cid=721).
