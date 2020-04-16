@@ -50,6 +50,33 @@ Interpret the coefficient of `income`.
 
 Write a sentence to your smart-but-not-mathematical boss which explains the association of income with preference for the Democratic candidate. Include a notion of uncertainty.
 
+plogis(0.21517677)
+
+0.21517677/4
+
+```{r scene-1}
+
+logistic_mod <- logistic_reg() %>% 
+  set_engine("glm")
+
+logistic_fit <- fit(logistic_mod,
+                    vote ~ ideology + income + gender + race,
+                    data = nes)
+
+logistic_fit %>% 
+  tidy(conf.in = TRUE) %>% 
+  select(term, estimate, conf.low, conf.high)
+
+# coef of income:
+# -0.21517677/4 = -0.05379419
+
+# so, taking into account ideology, gender, and race, a bump from one income bucket to the next is associated with a -.05 change in probability that a person will vote democratic
+
+# uncertainty: the percent change might be as low as 4% or as high as 7%
+
+
+
+```
 
 
 # Scene 2
@@ -57,6 +84,22 @@ Write a sentence to your smart-but-not-mathematical boss which explains the asso
 **Prompt:** Review [CART models](https://davidkane9.github.io/PPBDS/13-classification.html#classification-and-regression-trees-cart). Using the all the same independent variables as in Scene 1, estimate a CART model in which `vote` is the dependent variable.
 
 Hint: In addition to the functions you used in Scene 1, you may find `set_mode()` and `prp()` to be helpful.
+
+```{r scene-2a}
+
+cart_mod <- decision_tree() %>% 
+  set_engine("rpart", model = TRUE) %>% 
+  set_mode("classification")
+
+cart_fit <- fit(cart_mod,
+                vote ~ ideology + income + gender + race,
+                data = nes)
+
+cart_fit$fit %>% 
+  prp(extra = 6)
+
+```
+
 
 Print the fitted model.
 
@@ -67,7 +110,14 @@ Write two sentences explaining to your smart-but-not-mathematical boss what the 
 Optional: Can you write a simple dplr pipe which does, more or less, what the CART is doing, at least for the first node, and then confirms the numbers in the plot?
 
 
+```{r scene-2b}
 
+nes %>% 
+  filter(ideology >= 4) %>% 
+  filter(race == "Black") %>% 
+  summarize(mean(vote == "Democrat"))
+
+```
 
 # Scene 3
 
@@ -76,6 +126,25 @@ Optional: Can you write a simple dplr pipe which does, more or less, what the CA
 Hint: In addition to the functions you used in Scenes 1 and 2, you may find `rand_forest()` to be helpful.
 
 Print out and interpret the model.
+
+```{r scene-3}
+
+rf_mod <- rand_forest() %>% 
+  set_engine("randomForest") %>% 
+  set_mode("classification")
+
+rf_fit <- fit(rf_mod,
+              vote ~ ideology + income + gender + race,
+              data = nes)
+
+rf_fit
+
+# used 500 trees by default, can change by using rand_forest(trees = n) where n is the number of trees. For this particular model, the accuracy rate plateaus at about ~50 trees (so more than that doesn't really matter)
+
+# OOB error rate of ~25% means that the accuracy rate of this predictor is ~75% (for 75% of data that passes through the model, it will predict the correct vote outcome)
+
+```
+
 
 How many trees did the forest use? Would we get better results if we used a different number of trees?
 
@@ -100,6 +169,8 @@ Accuracy = (Actual 1 as 1 + Actual 0 as 0) / n
 Sensitivity = The proportion of actual 1s classified as 1
 Specificity = The proportion of actual 0s classified as 0
 
+
+remotes::install_github("daranzolin/d3rain")
 
 
 # Challenge Problem
